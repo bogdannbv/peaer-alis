@@ -1,0 +1,11 @@
+add_source_files(SRCS_LIST
+        messages.h
+        publisher.cpp
+        publisher.h
+        recognizer.cpp
+        recognizer.h
+        recorder.cpp
+        recorder.h
+        scheduler.cpp
+        scheduler.h
+)
