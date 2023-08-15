@@ -34,11 +34,9 @@ namespace utils {
     bool check_dir_or_create(const std::string &dir) {
         struct stat info{};
         if (
-                stat(dir.c_str(), &info) != 0
-                && mkdir(dir.c_str(), 0755) == 0
+                (stat(dir.c_str(), &info) != 0 && mkdir(dir.c_str(), 0755) == 0)
+                || (info.st_mode & S_IFDIR)
         ) {
-                return true;
-        } else if (info.st_mode & S_IFDIR) {
             return true;
         }
 
