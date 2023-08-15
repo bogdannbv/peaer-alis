@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(peaer)
+project(recorder)
 set(${PROJECT_NAME}_MAJOR "0")
 set(${PROJECT_NAME}_MINOR "1")
 set(${PROJECT_NAME}_PATCH "0")
@@ -10,8 +10,12 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-SET(CPR_VERSION 1.10.4)
-SET(ARGPARSE_VERSION v2.9)
+set(CPR_TAG 1.10.4)
+set(SPDLOG_TAG 1.12.0)
+set(JSON_TAG v3.11.2)
+set(ARGPARSE_TAG v2.9)
+set(CHANNEL_TAG v0.8.0)
+set(COMMAND_TAG 9a9edca13f15182b0c405902747f86c4a19638ec)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
     add_definitions(-Wall)
@@ -96,7 +100,7 @@ include(FetchContent)
 FetchContent_Declare(
         cpr
         GIT_REPOSITORY https://github.com/libcpr/cpr.git
-        GIT_TAG ${CPR_VERSION}
+        GIT_TAG ${CPR_TAG}
 )
 FetchContent_MakeAvailable(cpr)
 
@@ -105,7 +109,7 @@ include(FetchContent)
 FetchContent_Declare(
         argparse
         GIT_REPOSITORY https://github.com/p-ranav/argparse.git
-        GIT_TAG ${ARGPARSE_VERSION}
+        GIT_TAG ${ARGPARSE_TAG}
 )
 FetchContent_MakeAvailable(argparse)
 
@@ -114,7 +118,7 @@ include(FetchContent)
 FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG 1.12.0
+        GIT_TAG ${SPDLOG_TAG}
 )
 FetchContent_MakeAvailable(argparse)
 
@@ -123,9 +127,29 @@ include(FetchContent)
 FetchContent_Declare(
         json
         GIT_REPOSITORY https://github.com/nlohmann/json.git
-        GIT_TAG v3.11.2
+        GIT_TAG ${JSON_TAG}
 )
 FetchContent_MakeAvailable(json)
+
+# channel
+include(FetchContent)
+FetchContent_Declare(
+        channel
+        GIT_REPOSITORY https://github.com/andreiavrammsd/cpp-channel.git
+        GIT_TAG ${CHANNEL_TAG}
+)
+FetchContent_Populate(channel)
+include_directories(${channel_SOURCE_DIR}/include)
+
+# command
+include(FetchContent)
+FetchContent_Declare(
+        command
+        GIT_REPOSITORY https://github.com/RaymiiOrg/cpp-command-output.git
+        GIT_TAG ${COMMAND_TAG}
+)
+FetchContent_Populate(command)
+include_directories(${command_SOURCE_DIR})
 
 # Pass the GNU Radio version as 0xMMNNPP BCD.
 math(EXPR GNURADIO_BCD_VERSION
@@ -139,6 +163,9 @@ math(EXPR GNURADIO_BCD_VERSION
 )
 
 add_definitions(-DGNURADIO_VERSION=${GNURADIO_BCD_VERSION})
+
+# print
+message(STATUS "Gnuradio version: ${channel_SOURCE_DIR}")
 
 include_directories(
         ${CMAKE_SOURCE_DIR}/include

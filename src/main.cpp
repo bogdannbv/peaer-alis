@@ -1,10 +1,8 @@
 #include <iostream>
-#include <receiver.h>
 #include <cpr/cpr.h>
 #include <argparse/argparse.hpp>
 #include <osmosdr/device.h>
 #include <msd/channel.hpp>
-#include <HTTPRequest.hpp>
 #include <api/client.h>
 #include <command.h>
 #include <workers/recorder.h>
@@ -17,6 +15,15 @@ const double DEFAULT_START_FREQ = 88 * 1e6;
 
 const int DEFAULT_DURATION_SECONDS = 3;
 const int DEFAULT_CYCLE_DELAY_SECONDS = 60;
+
+void list_rtl_devices();
+
+int start(
+        const std::string &device_id,
+        const std::string &key,
+        double start_freq,
+        double sample_rate
+);
 
 int main(int argc, char *argv[]) {
     argparse::ArgumentParser program("peaer-", "0.1.0");
@@ -75,10 +82,10 @@ int main(int argc, char *argv[]) {
         std::cout << "HERE" << std::endl;
         std::cout << start_command.get<std::string>("-d") << std::endl;
         return start(
-                start_command.get<double>("--freq"),
-                start_command.get<double>("--sample_rate"),
                 start_command.get<std::string>("--device"),
-                start_command.get<std::string>("--key")
+                start_command.get<std::string>("--key"),
+                start_command.get<double>("--freq"),
+                start_command.get<double>("--sample_rate")
         );
     }
 
@@ -86,7 +93,7 @@ int main(int argc, char *argv[]) {
     exit(0);
 }
 
-int start(double start_freq, double sample_rate, const std::string &device_id, const std::string &key) {
+int start(const std::string &device_id, const std::string &key, double start_freq, double sample_rate) {
     workers::messages::stations_channel stations_tx;
     workers::messages::recordings_channel recordings;
     workers::messages::recognitions_channel recognitions_rx;
@@ -115,7 +122,8 @@ int start(double start_freq, double sample_rate, const std::string &device_id, c
     );
 
     std::jthread recorder_thread(&workers::recorder::start, &recorder, std::ref(stations_tx), std::ref(recordings));
-    std::jthread recognizer_thread(&workers::recognizer::start, &recognizer, std::ref(recordings), std::ref(recognitions_rx));
+    std::jthread recognizer_thread(&workers::recognizer::start, &recognizer, std::ref(recordings),
+                                   std::ref(recognitions_rx));
     std::jthread scheduler_thread(&workers::scheduler::start, &scheduler, std::ref(stations_tx));
     std::jthread publisher_thread(&workers::publisher::start, &publisher, std::ref(recognitions_rx));
 
