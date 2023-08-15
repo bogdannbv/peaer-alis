@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(recorder)
+project(alis)
 set(${PROJECT_NAME}_MAJOR "0")
 set(${PROJECT_NAME}_MINOR "1")
 set(${PROJECT_NAME}_PATCH "0")
