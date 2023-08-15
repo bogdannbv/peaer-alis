@@ -1,5 +1,5 @@
-#ifndef RECORDER_MESSAGES_H
-#define RECORDER_MESSAGES_H
+#ifndef ALIS_WORKERS_MESSAGES_H
+#define ALIS_WORKERS_MESSAGES_H
 
 #include <string>
 #include <msd/channel.hpp>
@@ -30,4 +30,4 @@ namespace workers::messages {
 
 } // workers
 
-#endif //RECORDER_MESSAGES_H
+#endif //ALIS_WORKERS_MESSAGES_H

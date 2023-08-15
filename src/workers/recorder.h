@@ -1,5 +1,5 @@
-#ifndef RECORDER_RECORDER_H
-#define RECORDER_RECORDER_H
+#ifndef ALIS_WORKERS_RECORDER_H
+#define ALIS_WORKERS_RECORDER_H
 
 #include "messages.h"
 #include <receiver.h>
@@ -36,4 +36,4 @@ namespace workers {
 
 }
 
-#endif //RECORDER_RECORDER_H
+#endif //ALIS_WORKERS_H

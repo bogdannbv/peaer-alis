@@ -1,5 +1,5 @@
-#ifndef RECORDER_RECOGNIZER_H
-#define RECORDER_RECOGNIZER_H
+#ifndef ALIS_WORKERS_RECOGNIZER_H
+#define ALIS_WORKERS_RECOGNIZER_H
 
 #include "messages.h"
 
@@ -27,4 +27,4 @@ namespace workers {
 
 }
 
-#endif //RECORDER_RECOGNIZER_H
+#endif //ALIS_WORKERS_RECOGNIZER_H

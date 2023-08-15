@@ -1,5 +1,5 @@
-#ifndef RECORDER_SCHEDULER_H
-#define RECORDER_SCHEDULER_H
+#ifndef ALIS_WORKERS_SCHEDULER_H
+#define ALIS_WORKERS_SCHEDULER_H
 
 #include <string>
 #include <api/client.h>
@@ -25,4 +25,4 @@ namespace workers {
 
 }
 
-#endif //RECORDER_SCHEDULER_H
+#endif //ALIS_WORKERS_SCHEDULER_H

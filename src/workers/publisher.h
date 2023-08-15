@@ -1,9 +1,5 @@
-//
-// Created by bogdan on 8/15/23.
-//
-
-#ifndef RECORDER_PUBLISHER_H
-#define RECORDER_PUBLISHER_H
+#ifndef ALIS_WORKERS_PUBLISHER_H
+#define ALIS_WORKERS_PUBLISHER_H
 
 #include <api/client.h>
 #include "messages.h"
@@ -26,4 +22,4 @@ namespace workers {
 
 } // workers
 
-#endif //RECORDER_PUBLISHER_H
+#endif //ALIS_WORKERS_PUBLISHER_H

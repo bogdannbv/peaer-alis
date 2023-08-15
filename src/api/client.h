@@ -1,5 +1,5 @@
-#ifndef RECORDER_CLIENT_H
-#define RECORDER_CLIENT_H
+#ifndef ALIS_API_CLIENT_H
+#define ALIS_API_CLIENT_H
 
 #include <cpr/cpr.h>
 
@@ -40,4 +40,4 @@ namespace api {
 
 }
 
-#endif //RECORDER_CLIENT_H
+#endif //ALIS_API_CLIENT_H

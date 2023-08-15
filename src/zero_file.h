@@ -1,9 +1,5 @@
-//
-// Created by bogdan on 8/13/23.
-//
-
-#ifndef RECORDER_ZERO_FILE_H
-#define RECORDER_ZERO_FILE_H
+#ifndef ALIS_ZERO_FILE_H
+#define ALIS_ZERO_FILE_H
 
 #include <iostream>
 #include <fstream>
@@ -27,4 +23,4 @@ private:
 };
 
 
-#endif //RECORDER_ZERO_FILE_H
+#endif //ALIS_ZERO_FILE_H
