@@ -4,47 +4,61 @@
 #include <osmosdr/device.h>
 #include <msd/channel.hpp>
 #include <api/client.h>
-#include <command.h>
 #include <workers/recorder.h>
 #include <workers/recognizer.h>
 #include <workers/scheduler.h>
 #include <workers/publisher.h>
 
-const double DEFAULT_SAMPLE_RATE = 1.8 * 1e6;
-const double DEFAULT_START_FREQ = 88 * 1e6;
+const std::string PROGRAM_NAME = "alis";
+const std::string PROGRAM_VERSION = "0.1.0";
+
+const double DEFAULT_SAMPLE_RATE = 1800000;
+const double DEFAULT_START_FREQ = 88000000;
 
 const int DEFAULT_DURATION_SECONDS = 3;
-const int DEFAULT_CYCLE_DELAY_SECONDS = 60;
+const int DEFAULT_SCHEDULER_INTERVAL = 120;
 
-void list_rtl_devices();
+const std::string DEFAULT_RECORDINGS_DIR = "/tmp/" + PROGRAM_NAME;
+
+int list_rtl_devices();
 
 int start(
         const std::string &device_id,
-        const std::string &key,
+        const std::string &api_base_url,
+        const std::string &api_key,
+        const std::string &recordings_dir,
+        int scheduler_interval,
+        int duration,
         double start_freq,
         double sample_rate
 );
 
 int main(int argc, char *argv[]) {
-    argparse::ArgumentParser program("peaer-", "0.1.0");
+    argparse::ArgumentParser program(PROGRAM_NAME, PROGRAM_VERSION);
 
     argparse::ArgumentParser start_command("start");
     start_command.add_description("Start recording");
-    start_command.add_argument("-k", "--key")
-            .help("API key")
-            .required();
     start_command.add_argument("-d", "--device")
             .help("Device ID(s) (see `devices` command)")
             .required();
-    start_command.add_argument("-t", "--duration")
+    start_command.add_argument("-u", "--api-url")
+            .help("API base URL")
+            .required();
+    start_command.add_argument("-k", "--api-key")
+            .help("API key")
+            .required();
+    start_command.add_argument("-o", "--recordings-dir")
+            .help("Recordings directory")
+            .default_value(DEFAULT_RECORDINGS_DIR);
+    start_command.add_argument("-t", "--recording-duration")
             .help("Recording duration in seconds")
             .scan<'i', int>()
             .default_value(DEFAULT_DURATION_SECONDS);
-    start_command.add_argument("-c", "--cycle-delay")
-            .help("Recording cycle delay in seconds")
+    start_command.add_argument("-c", "--scheduler-interval")
+            .help("Scheduler cycle delay in seconds")
             .scan<'i', int>()
-            .default_value(DEFAULT_CYCLE_DELAY_SECONDS);
-    start_command.add_argument("-r", "--sample_rate")
+            .default_value(DEFAULT_SCHEDULER_INTERVAL);
+    start_command.add_argument("-s", "--sample_rate")
             .help("Sample rate")
             .scan<'g', double>()
             .default_value(DEFAULT_SAMPLE_RATE);
@@ -74,8 +88,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (program.is_subcommand_used("devices")) {
-        list_rtl_devices();
-        exit(0);
+        return list_rtl_devices();
     }
 
     if (program.is_subcommand_used("start")) {
@@ -83,17 +96,32 @@ int main(int argc, char *argv[]) {
         std::cout << start_command.get<std::string>("-d") << std::endl;
         return start(
                 start_command.get<std::string>("--device"),
+                start_command.get<std::string>("--api-url"),
                 start_command.get<std::string>("--key"),
+                start_command.get<std::string>("--recordings-dir"),
+                start_command.get<int>("--scheduler-interval"),
+                start_command.get<int>("--recording-duration"),
                 start_command.get<double>("--freq"),
                 start_command.get<double>("--sample_rate")
         );
     }
 
     std::cout << program;
-    exit(0);
+    return 0;
 }
 
-int start(const std::string &device_id, const std::string &key, double start_freq, double sample_rate) {
+int start(
+        const std::string &device_id,
+        const std::string &api_base_url,
+        const std::string &api_key,
+        const std::string &recordings_dir,
+        int scheduler_interval,
+        int duration,
+        double start_freq,
+        double sample_rate
+) {
+    auto client = api::client(api_base_url, api_key);
+
     workers::messages::stations_channel stations_tx;
     workers::messages::recordings_channel recordings;
     workers::messages::recognitions_channel recognitions_rx;
@@ -102,35 +130,53 @@ int start(const std::string &device_id, const std::string &key, double start_fre
             device_id,
             start_freq,
             sample_rate,
-            5,
-            "/tmp"
+            duration,
+            recordings_dir
     );
 
     workers::recognizer recognizer(
             "/usr/bin/songrec"
     );
 
-    auto client = api::client("http://localhost:6969/api", key);
-
     workers::scheduler scheduler(
             &client,
-            90
+            scheduler_interval
     );
 
     workers::publisher publisher(
             &client
     );
 
-    std::jthread recorder_thread(&workers::recorder::start, &recorder, std::ref(stations_tx), std::ref(recordings));
-    std::jthread recognizer_thread(&workers::recognizer::start, &recognizer, std::ref(recordings),
-                                   std::ref(recognitions_rx));
-    std::jthread scheduler_thread(&workers::scheduler::start, &scheduler, std::ref(stations_tx));
-    std::jthread publisher_thread(&workers::publisher::start, &publisher, std::ref(recognitions_rx));
+    std::jthread recorder_thread(
+            &workers::recorder::start,
+            &recorder,
+            std::ref(stations_tx),
+            std::ref(recordings)
+    );
+
+    std::jthread recognizer_thread(
+            &workers::recognizer::start,
+            &recognizer,
+            std::ref(recordings),
+            std::ref(recognitions_rx)
+    );
+
+    std::jthread scheduler_thread(
+            &workers::scheduler::start,
+            &scheduler,
+            std::ref(stations_tx)
+    );
+
+    std::jthread publisher_thread(
+            &workers::publisher::start,
+            &publisher,
+            std::ref(recognitions_rx)
+    );
 
     return 0;
 }
 
-void list_rtl_devices() {
+int list_rtl_devices() {
     osmosdr::devices_t devs = osmosdr::device::find();
     osmosdr::devices_t rtl_devs;
 
@@ -150,4 +196,6 @@ void list_rtl_devices() {
     for (auto &dev: rtl_devs) {
         std::cout << dev["rtl"] << "\t" << dev["label"] << std::endl;
     }
+
+    return 0;
 }
