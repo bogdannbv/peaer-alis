@@ -1,26 +1,21 @@
-#ifndef ALIS_H
-#define ALIS_H
+#include <utils.h>
+#include <sys/stat.h>
+#include <iostream>
 
-#include <algorithm>
-#include <cctype>
-#include <locale>
-#include <command.h>
-
-namespace alis {
-
-    static inline void ltrim(std::string &s) {
+namespace utils {
+    inline void ltrim(std::string &s) {
         s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
             return !std::isspace(ch);
         }));
     }
 
-    static inline void rtrim(std::string &s) {
+    inline void rtrim(std::string &s) {
         s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
             return !std::isspace(ch);
         }).base(), s.end());
     }
 
-    static inline void trim(std::string &s) {
+    inline void trim(std::string &s) {
         rtrim(s);
         ltrim(s);
     }
@@ -35,6 +30,18 @@ namespace alis {
 
         return result.output;
     }
-}
 
-#endif //ALIS_H
+    bool check_dir_or_create(const std::string &dir) {
+        struct stat info{};
+        if (
+                stat(dir.c_str(), &info) != 0
+                && mkdir(dir.c_str(), 0755) == 0
+        ) {
+                return true;
+        } else if (info.st_mode & S_IFDIR) {
+            return true;
+        }
+
+        return false;
+    }
+}

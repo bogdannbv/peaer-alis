@@ -1,6 +1,5 @@
-#include <alis.h>
+#include <utils.h>
 #include <iostream>
-#include <cpr/cpr.h>
 #include <argparse/argparse.hpp>
 #include <osmosdr/device.h>
 #include <msd/channel.hpp>
@@ -9,6 +8,7 @@
 #include <workers/recognizer.h>
 #include <workers/scheduler.h>
 #include <workers/publisher.h>
+#include <spdlog/spdlog.h>
 
 const std::string PROGRAM_NAME = "alis";
 const std::string PROGRAM_VERSION = "0.1.0";
@@ -39,9 +39,9 @@ int main(int argc, char *argv[]) {
     argparse::ArgumentParser program(PROGRAM_NAME, std::ref(PROGRAM_VERSION));
 
     argparse::ArgumentParser start_command("start");
-    start_command.add_description("Start recording");
+    start_command.add_description("start recording");
     start_command.add_argument("-d", "--device")
-            .help("Device ID(s) (see `devices` command)")
+            .help("device ID(s) (see `devices` command)")
             .required();
     start_command.add_argument("-u", "--api-url")
             .help("API base URL")
@@ -50,28 +50,28 @@ int main(int argc, char *argv[]) {
             .help("API key")
             .required();
     start_command.add_argument("-o", "--recordings-dir")
-            .help("Recordings directory")
+            .help("recordings directory")
             .default_value(DEFAULT_RECORDINGS_DIR);
     start_command.add_argument("-t", "--recording-duration")
-            .help("Recording duration in seconds")
+            .help("recording duration in seconds")
             .scan<'i', int>()
             .default_value(DEFAULT_DURATION_SECONDS);
     start_command.add_argument("-c", "--scheduler-interval")
-            .help("Scheduler cycle delay in seconds")
+            .help("scheduler cycle delay in seconds")
             .scan<'i', int>()
             .default_value(DEFAULT_SCHEDULER_INTERVAL);
     start_command.add_argument("-s", "--sample_rate")
-            .help("Sample rate")
+            .help("sample rate")
             .scan<'g', double>()
             .default_value(DEFAULT_SAMPLE_RATE);
     start_command.add_argument("--freq")
-            .help("Start frequency (not very useful)")
+            .help("start frequency (not very useful)")
             .scan<'g', double>()
             .default_value(DEFAULT_START_FREQ);
     auto songrec_arg = &start_command.add_argument("--songrec")
-            .help("SongRec binary");
+            .help("path to SongRec binary");
 
-    auto songrec_path = alis::find_songrec();
+    auto songrec_path = utils::find_songrec();
     if (!songrec_path.empty()) {
         songrec_arg->default_value(songrec_path);
     } else {
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
     }
 
     argparse::ArgumentParser devices_command("devices");
-    devices_command.add_description("List available devices");
+    devices_command.add_description("list available devices");
 
     program.add_subparser(start_command);
     program.add_subparser(devices_command);
@@ -103,13 +103,16 @@ int main(int argc, char *argv[]) {
     }
 
     if (program.is_subcommand_used("start")) {
-        std::cout << "HERE" << std::endl;
-        std::cout << start_command.get<std::string>("-d") << std::endl;
+        auto recordings_dir = start_command.get<std::string>("--recordings-dir");
+        if (!utils::check_dir_or_create(recordings_dir)) {
+            spdlog::critical("Failed to create recordings directory: {}", recordings_dir);
+            exit(1);
+        }
         return start(
                 start_command.get<std::string>("--device"),
                 start_command.get<std::string>("--api-url"),
-                start_command.get<std::string>("--key"),
-                start_command.get<std::string>("--songrec-path"),
+                start_command.get<std::string>("--api-key"),
+                start_command.get<std::string>("--songrec"),
                 start_command.get<std::string>("--recordings-dir"),
                 start_command.get<int>("--scheduler-interval"),
                 start_command.get<int>("--recording-duration"),

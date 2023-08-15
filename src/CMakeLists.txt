@@ -5,11 +5,13 @@ add_subdirectory(receivers)
 add_subdirectory(workers)
 
 add_source_files(SRCS_LIST
-    main.cpp
-    receiver.cpp
-    receiver.h
-    zero_file.cpp
-    zero_file.h
+        main.cpp
+        receiver.cpp
+        receiver.h
+        utils.cpp
+        utils.h
+        zero_file.cpp
+        zero_file.h
 )
 
 get_property(${PROJECT_NAME}_SOURCE GLOBAL PROPERTY SRCS_LIST)
