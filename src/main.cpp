@@ -1,3 +1,4 @@
+#include <alis.h>
 #include <iostream>
 #include <cpr/cpr.h>
 #include <argparse/argparse.hpp>
@@ -26,6 +27,7 @@ int start(
         const std::string &device_id,
         const std::string &api_base_url,
         const std::string &api_key,
+        const std::string &songrec_path,
         const std::string &recordings_dir,
         int scheduler_interval,
         int duration,
@@ -34,7 +36,7 @@ int start(
 );
 
 int main(int argc, char *argv[]) {
-    argparse::ArgumentParser program(PROGRAM_NAME, PROGRAM_VERSION);
+    argparse::ArgumentParser program(PROGRAM_NAME, std::ref(PROGRAM_VERSION));
 
     argparse::ArgumentParser start_command("start");
     start_command.add_description("Start recording");
@@ -62,10 +64,19 @@ int main(int argc, char *argv[]) {
             .help("Sample rate")
             .scan<'g', double>()
             .default_value(DEFAULT_SAMPLE_RATE);
-    start_command.add_argument("-f", "--freq")
+    start_command.add_argument("--freq")
             .help("Start frequency (not very useful)")
             .scan<'g', double>()
             .default_value(DEFAULT_START_FREQ);
+    auto songrec_arg = &start_command.add_argument("--songrec")
+            .help("SongRec binary");
+
+    auto songrec_path = alis::find_songrec();
+    if (!songrec_path.empty()) {
+        songrec_arg->default_value(songrec_path);
+    } else {
+        songrec_arg->required();
+    }
 
     argparse::ArgumentParser devices_command("devices");
     devices_command.add_description("List available devices");
@@ -98,6 +109,7 @@ int main(int argc, char *argv[]) {
                 start_command.get<std::string>("--device"),
                 start_command.get<std::string>("--api-url"),
                 start_command.get<std::string>("--key"),
+                start_command.get<std::string>("--songrec-path"),
                 start_command.get<std::string>("--recordings-dir"),
                 start_command.get<int>("--scheduler-interval"),
                 start_command.get<int>("--recording-duration"),
@@ -114,6 +126,7 @@ int start(
         const std::string &device_id,
         const std::string &api_base_url,
         const std::string &api_key,
+        const std::string &songrec_path,
         const std::string &recordings_dir,
         int scheduler_interval,
         int duration,
@@ -134,18 +147,11 @@ int start(
             recordings_dir
     );
 
-    workers::recognizer recognizer(
-            "/usr/bin/songrec"
-    );
+    workers::recognizer recognizer(songrec_path);
 
-    workers::scheduler scheduler(
-            &client,
-            scheduler_interval
-    );
+    workers::scheduler scheduler(&client, scheduler_interval);
 
-    workers::publisher publisher(
-            &client
-    );
+    workers::publisher publisher(&client);
 
     std::jthread recorder_thread(
             &workers::recorder::start,
