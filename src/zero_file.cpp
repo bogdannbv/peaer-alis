@@ -25,7 +25,7 @@ std::string zero_file::get_path() {
     return path;
 }
 
-std::string zero_file::get_random_tmp_file(const int len) {
+ std::string zero_file::get_random_tmp_file(const int len) {
     static const char alphanum[] =
             "0123456789"
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
