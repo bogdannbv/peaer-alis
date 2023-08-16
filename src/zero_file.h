@@ -17,9 +17,9 @@ public:
 
     std::string get_path();
 
+    static std::string get_random_tmp_file(int len);
 private:
     std::string path;
-    static std::string get_random_tmp_file(int len);
 };
 
 

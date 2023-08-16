@@ -1335,7 +1335,7 @@ std::string receiver::escape_filename(std::string filename) {
 }
 
 std::string receiver::get_zero_file() {
-    zero_file zf;
+    zero_file_sptr zf;
 
-    return zf.get_path();
+    return zf->get_path();
 }
