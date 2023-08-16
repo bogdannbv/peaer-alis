@@ -9,6 +9,7 @@
 #include <workers/scheduler.h>
 #include <workers/publisher.h>
 #include <spdlog/spdlog.h>
+#include <receivers/receiver.h>
 
 const std::string PROGRAM_NAME = "alis";
 const std::string PROGRAM_VERSION = "0.1.0";
@@ -36,6 +37,20 @@ int start(
 );
 
 int main(int argc, char *argv[]) {
+    auto receiver = new alis::receivers::receiver(
+            "0",
+            1
+    );
+
+    receiver->set_auto_gain(true);
+    receiver->start();
+    receiver->start_recording("/tmp/alis.wav");
+
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    receiver->stop_recording();
+
+    return 0;
     argparse::ArgumentParser program(PROGRAM_NAME, std::ref(PROGRAM_VERSION));
 
     argparse::ArgumentParser start_command("start");
