@@ -11,8 +11,8 @@ add_source_files(SRCS_LIST
         rds/parser_impl.h
         rds/parser.h
         rds/tmc_events.h
-        agc_impl.cpp
-        agc_impl.h
+#        agc_impl.cpp
+#        agc_impl.h
         correct_iq_cc.cpp
         correct_iq_cc.h
         downconverter.cpp
@@ -23,24 +23,24 @@ add_source_files(SRCS_LIST
         lpf.h
         resampler_xx.cpp
         resampler_xx.h
-        rx_agc_xx.cpp
-        rx_agc_xx.h
+#        rx_agc_xx.cpp
+#        rx_agc_xx.h
         rx_demod_am.cpp
         rx_demod_am.h
         rx_demod_fm.cpp
         rx_demod_fm.h
-        rx_fft.cpp
-        rx_fft.h
+#        rx_fft.cpp
+#        rx_fft.h
         rx_filter.cpp
         rx_filter.h
         rx_meter.cpp
         rx_meter.h
-        rx_noise_blanker_cc.cpp
-        rx_noise_blanker_cc.h
+#        rx_noise_blanker_cc.cpp
+#        rx_noise_blanker_cc.h
         rx_rds.cpp
         rx_rds.h
-        sniffer_f.cpp
-        sniffer_f.h
+#        sniffer_f.cpp
+#        sniffer_f.h
         stereo_demod.cpp
         stereo_demod.h
 )

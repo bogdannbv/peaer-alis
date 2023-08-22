@@ -1,13 +1,10 @@
 add_subdirectory(api)
 add_subdirectory(dsp)
-add_subdirectory(pulseaudio)
 add_subdirectory(receivers)
 add_subdirectory(workers)
 
 add_source_files(SRCS_LIST
         main.cpp
-        receiver.cpp
-        receiver.h
         utils.cpp
         utils.h
         zero_file.cpp

@@ -1,6 +1,6 @@
 add_source_files(SRCS_LIST
-	nbrx.cpp
-	nbrx.h
+#	nbrx.cpp
+#	nbrx.h
 	receiver.cpp
 	receiver.h
 	receiver_base.cpp
