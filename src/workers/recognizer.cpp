@@ -8,8 +8,9 @@ namespace workers {
         this->songrec_path = songrec_path;
     }
 
-    void recognizer::start(messages::recordings_channel &rx_recordings, messages::recognitions_channel &tx_recognitions) {
-        for (auto recording : rx_recordings) {
+    void
+    recognizer::start(messages::recordings_channel &rx_recordings, messages::recognitions_channel &tx_recognitions) {
+        for (auto recording: rx_recordings) {
             std::string path = recording.file_path;
             std::string response = recognize(path);
 
@@ -19,18 +20,18 @@ namespace workers {
                         .shazam_response = response
                 };
 
-                std::remove(path.c_str());
             }
 
+            std::remove(path.c_str());
             spdlog::info("Removing " + path);
         }
     }
 
     std::string recognizer::recognize(const std::string &path) {
         auto result = raymii::Command::exec(std::format("{} {} {}",
-                this->songrec_path,
-                "audio-file-to-recognized-song",
-                path
+                                                        this->songrec_path,
+                                                        "audio-file-to-recognized-song",
+                                                        path
         ));
 
         if (result.exitstatus != 0) {
