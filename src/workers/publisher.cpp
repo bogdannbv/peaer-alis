@@ -13,6 +13,8 @@ namespace workers {
             try {
                 client->create_playback(
                         recognition.recording.station.id,
+                        recognition.recording.started_at,
+                        recognition.recording.finished_at,
                         recognition.shazam_response
                 );
 

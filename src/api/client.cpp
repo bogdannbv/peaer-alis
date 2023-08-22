@@ -18,7 +18,7 @@ namespace api {
                 cpr::Url{endpoint},
                 cpr::Header{
                         {"X-API-Key", api_key},
-                        {"Accept", "application/json"},
+                        {"Accept",    "application/json"},
                 }
         );
 
@@ -44,16 +44,27 @@ namespace api {
         return stations;
     }
 
-    cpr::Response client::create_playback(int station_id, const std::string &shazam_json) {
+    cpr::Response client::create_playback(
+            int station_id,
+            uint64_t started_at,
+            uint64_t finished_at,
+            const std::string &shazam_json
+    ) {
         auto endpoint = get_url(std::format("stations/{}/playbacks", station_id));
-        cpr::Response response = cpr::Get(
+        nlohmann::json payload;
+
+        payload["started_at"] = started_at;
+        payload["finished_at"] = finished_at;
+        payload["shazam_response"] = nlohmann::json::parse(shazam_json);
+
+        cpr::Response response = cpr::Post(
                 cpr::Url{endpoint},
                 cpr::Header{
-                        {"X-API-Key",   api_key},
+                        {"X-API-Key",    api_key},
                         {"Content-Type", "application/json"},
                         {"Accept",       "application/json"},
                 },
-                cpr::Body{shazam_json}
+                cpr::Body{payload.dump()}
         );
 
         if (response.error.code != cpr::ErrorCode::OK) {
