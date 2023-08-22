@@ -20,7 +20,7 @@
 
 #include "zero_file.h"
 
-namespace alis {
+namespace alis::receivers {
 
     class receiver {
     public:

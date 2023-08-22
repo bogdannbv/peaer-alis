@@ -1,11 +1,11 @@
 #include "receiver.h"
-#include "receivers/wfmrx.h"
+#include "wfmrx.h"
 
 #define TARGET_QUAD_RATE 1e6
 #define WAV_FILE_GAIN 0.5
 #define AUDIO_SAMPLE_RATE 48000
 
-namespace alis {
+namespace alis::receivers {
 
     receiver::receiver(const std::string &device_id, unsigned int decimation) :
             running(false),
