@@ -13,17 +13,12 @@ namespace workers {
         this->duration_seconds = duration_seconds;
         this->dir = dir;
 
-        rx = new receiver(
-                get_rtl_device_string(device_id),
-                "",
+        rx = new alis::receivers::receiver(
+                device_id,
                 1
         );
-        rx->set_auto_gain(true);
 
-        rx->set_demod(receiver::RX_DEMOD_WFM_M);
-
-        rx->set_input_rate(sample_rate);
-        rx->set_rf_freq(start_frequency);
+        rx->set_center_freq(start_frequency);
     }
 
     void recorder::start(messages::stations_channel &rx_stations, messages::recordings_channel &tx_recordings) {
@@ -37,20 +32,20 @@ namespace workers {
                     duration_seconds
             );
 
-            rx->set_rf_freq(station.frequency);
-            std::this_thread::sleep_for(100ms);
+            rx->set_center_freq(station.frequency);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
             uint64_t started_at = now_timestamp();
 
-            std::string file_path = std::format("{}/rec_{}_{}.wav", dir, station.id, started_at);
+            std::string file_path = std::format("{}/alis_{}_{}.wav", dir, station.id, started_at);
 
-            rx->start_audio_recording(file_path);
+            rx->start_recording(file_path);
 
-            if (!rx->is_recording_audio()) continue;
+            if (!rx->is_recording()) continue;
 
             std::this_thread::sleep_for(std::chrono::seconds(duration_seconds));
 
-            rx->stop_audio_recording();
+            rx->stop_recording();
 
             uint64_t finished_at = now_timestamp();
 

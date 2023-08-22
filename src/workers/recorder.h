@@ -2,7 +2,8 @@
 #define ALIS_WORKERS_RECORDER_H
 
 #include "messages.h"
-#include <receiver.h>
+#include <receivers/receiver.h>
+#include <chrono>
 
 namespace workers {
 
@@ -26,7 +27,7 @@ namespace workers {
     private:
         int duration_seconds;
         std::string dir;
-        receiver *rx;
+        alis::receivers::receiver *rx;
 
     private:
         static std::string get_rtl_device_string(const std::string &device_id);
