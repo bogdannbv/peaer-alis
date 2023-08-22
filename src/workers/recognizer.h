@@ -11,7 +11,6 @@ namespace workers {
                 const std::string &songrec_path
 
         );
-//        ~recognizer();
 
         void start(
                 messages::recordings_channel &rx_recordings,
