@@ -45,52 +45,12 @@ function(add_source_files list)
     set_property(GLOBAL APPEND PROPERTY ${list} "${SRCS}")
 endfunction(add_source_files)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux|FreeBSD")
-    if(NOT LINUX_AUDIO_BACKEND)
-        set(LINUX_AUDIO_BACKEND Pulseaudio CACHE STRING "Choose the audio backend, options are: Pulseaudio, Portaudio, Gr-audio" FORCE)
-    endif()
-
-    if(${LINUX_AUDIO_BACKEND} MATCHES "Pulseaudio")
-        message(STATUS "Pulseaudio backend enabled")
-        find_package(PulseAudio REQUIRED)
-        # there is a defect in the pulse audio cmake file that does not include this library. So we add it here.
-        find_library(PULSE-SIMPLE NAMES pulse-simple REQUIRED)
-        add_definitions(-DWITH_PULSEAUDIO)
-        unset(PORTAUDIO_INCLUDE_DIRS CACHE)
-        unset(PORTAUDIO_LIBRARIES CACHE)
-    elseif(${LINUX_AUDIO_BACKEND} MATCHES "Portaudio")
-        message(STATUS "Portaudio backend enabled")
-        find_package(PORTAUDIO REQUIRED)
-        add_definitions(-DWITH_PORTAUDIO)
-        unset(PULSEAUDIO_FOUND CACHE)
-        unset(PULSEAUDIO_INCLUDE_DIR CACHE)
-        unset(PULSEAUDIO_LIBRARY CACHE)
-        unset(PulseAudio_DIR CACHE)
-        unset(PULSE-SIMPLE CACHE)
-        unset(PULSEAUDIO_INCLUDE_DIR CACHE)
-        unset(PULSEAUDIO_MAINLOOP_LIBRARY CACHE)
-    elseif(${LINUX_AUDIO_BACKEND} MATCHES "Gr-audio")
-        message(STATUS "Gr-audio backend enabled")
-        unset(PULSEAUDIO_FOUND CACHE)
-        unset(PULSEAUDIO_INCLUDE_DIR CACHE)
-        unset(PULSEAUDIO_LIBRARY CACHE)
-        unset(PulseAudio_DIR CACHE)
-        unset(PULSE-SIMPLE CACHE)
-        unset(PULSEAUDIO_INCLUDE_DIR CACHE)
-        unset(PULSEAUDIO_MAINLOOP_LIBRARY CACHE)
-        unset(PORTAUDIO_INCLUDE_DIRS CACHE)
-        unset(PORTAUDIO_LIBRARIES CACHE)
-    else()
-        message(FATAL_ERROR "Invalid audio backend: should be either Pulseaudio, Portaudio or Gr-audio")
-    endif()
-endif()
-
 # GNURadio and Osmocom
 include(FindPkgConfig)
 find_package(Gnuradio-osmosdr REQUIRED)
 
-set(GR_REQUIRED_COMPONENTS RUNTIME ANALOG AUDIO BLOCKS DIGITAL FILTER FFT PMT)
-find_package(Gnuradio REQUIRED COMPONENTS analog audio blocks digital filter fft network)
+set(GR_REQUIRED_COMPONENTS RUNTIME ANALOG BLOCKS DIGITAL FILTER FFT)
+find_package(Gnuradio REQUIRED COMPONENTS analog blocks digital filter fft)
 if(NOT Gnuradio_FOUND)
     message(FATAL_ERROR "GnuRadio is required to compile ${PROJECT_NAME}")
 endif()
@@ -180,14 +140,10 @@ add_subdirectory(src)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         ${GNURADIO_OSMOSDR_LIBRARIES}
-        ${PULSEAUDIO_LIBRARY}
-        ${PULSE-SIMPLE}
         gnuradio::gnuradio-analog
         gnuradio::gnuradio-blocks
         gnuradio::gnuradio-digital
         gnuradio::gnuradio-filter
-        gnuradio::gnuradio-network
-        gnuradio::gnuradio-audio
         nlohmann_json::nlohmann_json
         cpr::cpr
         argparse
