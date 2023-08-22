@@ -23,7 +23,12 @@ namespace api {
 
         std::vector<station> get_stations();
 
-        cpr::Response create_playback(int station_id, const std::string &shazam_json);
+        cpr::Response create_playback(
+                int station_id,
+                uint64_t started_at,
+                uint64_t finished_at,
+                const std::string &shazam_json
+        );
 
     private:
         std::string api_key;
