@@ -13,10 +13,7 @@ namespace workers {
         this->duration_seconds = duration_seconds;
         this->dir = dir;
 
-        rx = new alis::receivers::receiver(
-                device_id,
-                1
-        );
+        rx = new alis::receivers::receiver(device_id);
 
         rx->set_center_freq(start_frequency);
     }
@@ -56,10 +53,6 @@ namespace workers {
                     .file_path = file_path,
             };
         }
-    }
-
-    std::string recorder::get_rtl_device_string(const std::string &device_id) {
-        return "rtl=" + device_id;
     }
 
     uint64_t recorder::now_timestamp() {

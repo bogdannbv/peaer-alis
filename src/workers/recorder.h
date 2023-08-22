@@ -30,8 +30,6 @@ namespace workers {
         alis::receivers::receiver *rx;
 
     private:
-        static std::string get_rtl_device_string(const std::string &device_id);
-
         static uint64_t now_timestamp();
     };
 
