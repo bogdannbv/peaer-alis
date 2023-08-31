@@ -35,6 +35,7 @@ namespace api {
             stations.push_back(station{
                     .id = st["id"],
                     .name = st["name"],
+                    .slug = st["slug"],
                     .country = st["country"],
                     .frequency = st["frequency"],
             });

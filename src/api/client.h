@@ -9,6 +9,7 @@ namespace api {
     typedef struct {
         int id;
         std::string name;
+        std::string slug;
         std::string country;
         double frequency;
     } station;
