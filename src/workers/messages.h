@@ -3,6 +3,7 @@
 
 #include <string>
 #include <msd/channel.hpp>
+#include <nlohmann/json.hpp>
 
 namespace workers::messages {
 
@@ -20,7 +21,7 @@ namespace workers::messages {
 
     struct recognition {
         messages::recording recording;
-        std::string shazam_response;
+        nlohmann::json shazam_response;
         double publish_tries = 0;
     };
 
