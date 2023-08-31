@@ -30,7 +30,7 @@ namespace workers {
             );
 
             rx->set_center_freq(station.frequency);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
             uint64_t started_at = now_timestamp();
 
