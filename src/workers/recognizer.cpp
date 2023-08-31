@@ -14,17 +14,19 @@ namespace workers {
     ) {
         for (auto recording: rx_recordings) {
             std::string path = recording.file_path;
-            std::string response = recognize(path);
+            nlohmann::json response = nlohmann::json::parse(recognize(path));
 
-            if (!response.empty()) {
+            if (!response["matches"].empty()) {
                 tx_recognitions << messages::recognition{
                         .recording = recording,
                         .shazam_response = response
                 };
+            } else {
+                spdlog::warn("SongRec couldn't recognize: {}", path);
             }
 
+            spdlog::info("Removing: {} ", path);
             std::remove(path.c_str());
-            spdlog::info("Removing " + path);
         }
     }
 
