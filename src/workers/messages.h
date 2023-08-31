@@ -9,6 +9,8 @@ namespace workers::messages {
 
     struct station {
         int id;
+        std::string name;
+        std::string slug;
         double frequency;
     };
 
