@@ -2,6 +2,7 @@
 #define ALIS_API_CLIENT_H
 
 #include <cpr/cpr.h>
+#include <nlohmann/json.hpp>
 
 namespace api {
 
@@ -27,7 +28,7 @@ namespace api {
                 int station_id,
                 uint64_t started_at,
                 uint64_t finished_at,
-                const std::string &shazam_json
+                const nlohmann::json &shazam_json
         );
 
     private:

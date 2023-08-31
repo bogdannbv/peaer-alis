@@ -1,6 +1,5 @@
 #include "client.h"
 #include <iostream>
-#include <nlohmann/json.hpp>
 
 namespace api {
 
@@ -32,7 +31,7 @@ namespace api {
 
         auto json = nlohmann::json::parse(response.text);
 
-        for (auto &[key, st]: json.items()) {
+        for (auto &[key, st]: json["data"].items()) {
             stations.push_back(station{
                     .id = st["id"],
                     .name = st["name"],
@@ -48,14 +47,13 @@ namespace api {
             int station_id,
             uint64_t started_at,
             uint64_t finished_at,
-            const std::string &shazam_json
+            const nlohmann::json &shazam_json
     ) {
         auto endpoint = get_url(std::format("stations/{}/playbacks", station_id));
         nlohmann::json payload;
 
-        payload["started_at"] = started_at;
-        payload["finished_at"] = finished_at;
-        payload["shazam_response"] = nlohmann::json::parse(shazam_json);
+        payload["recorded_at"] = started_at;
+        payload["shazam"] = shazam_json;
 
         cpr::Response response = cpr::Post(
                 cpr::Url{endpoint},
@@ -71,7 +69,7 @@ namespace api {
             throw exception("Request error: " + response.error.message);
         }
 
-        if (response.status_code != cpr::status::HTTP_OK) {
+        if (!cpr::status::is_success(response.status_code)) {
             throw exception("Unable to create playback: " + response.status_line);
         }
 
