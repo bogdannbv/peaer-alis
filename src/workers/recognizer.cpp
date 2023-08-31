@@ -1,6 +1,7 @@
 #include "recognizer.h"
 #include <command.h>
 #include <spdlog/spdlog.h>
+#include <fmt/format.h>
 
 namespace workers {
 
@@ -31,7 +32,7 @@ namespace workers {
     }
 
     std::string recognizer::recognize(const std::string &path) {
-        auto result = raymii::Command::exec(std::format("{} {} {}",
+        auto result = raymii::Command::exec(fmt::format("{} {} {}",
                                                         this->songrec_path,
                                                         "audio-file-to-recognized-song",
                                                         path

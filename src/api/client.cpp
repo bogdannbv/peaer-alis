@@ -1,5 +1,6 @@
 #include "client.h"
 #include <iostream>
+#include <fmt/format.h>
 
 namespace api {
 
@@ -50,7 +51,7 @@ namespace api {
             uint64_t finished_at,
             const nlohmann::json &shazam_json
     ) {
-        auto endpoint = get_url(std::format("stations/{}/playbacks", station_id));
+        auto endpoint = get_url(fmt::format("stations/{}/playbacks", station_id));
         nlohmann::json payload;
 
         payload["recorded_at"] = started_at;
@@ -82,7 +83,7 @@ namespace api {
         if (!base_url.ends_with("/") && !path.starts_with("/")) {
             separator = "/";
         }
-        return std::format("{}{}{}", base_url, separator, path);
+        return fmt::format("{}{}{}", base_url, separator, path);
     }
 
 }

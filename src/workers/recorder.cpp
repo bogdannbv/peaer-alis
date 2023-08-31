@@ -1,5 +1,6 @@
 #include "recorder.h"
 #include <spdlog/spdlog.h>
+#include <fmt/format.h>
 
 namespace workers {
 
@@ -34,7 +35,7 @@ namespace workers {
 
             uint64_t started_at = now_timestamp();
 
-            std::string file_path = std::format("{}/{}_{}_{}.wav", dir, station.slug, station.id, started_at);
+            std::string file_path = fmt::format("{}/{}_{}_{}.wav", dir, station.slug, station.id, started_at);
 
             rx->start_recording(file_path);
 
