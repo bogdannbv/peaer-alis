@@ -23,8 +23,8 @@ namespace workers {
 
         for (auto station: rx_stations) {
             spdlog::info(
-                    "Recording station #{} ({} MHz) for {} seconds",
-                    station.id,
+                    "Recording station {} ({} MHz) for {} seconds",
+                    station.name,
                     station.frequency / 1e6,
                     duration_seconds
             );
@@ -34,7 +34,7 @@ namespace workers {
 
             uint64_t started_at = now_timestamp();
 
-            std::string file_path = std::format("{}/alis_{}_{}.wav", dir, station.id, started_at);
+            std::string file_path = std::format("{}/{}_{}_{}.wav", dir, station.slug, station.id, started_at);
 
             rx->start_recording(file_path);
 
