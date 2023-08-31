@@ -11,7 +11,6 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CPR_TAG 1.10.4)
-set(SPDLOG_TAG 1.12.0)
 set(JSON_TAG v3.11.2)
 set(ARGPARSE_TAG v2.9)
 set(CHANNEL_TAG v0.8.0)
@@ -70,15 +69,6 @@ FetchContent_Declare(
         argparse
         GIT_REPOSITORY https://github.com/p-ranav/argparse.git
         GIT_TAG ${ARGPARSE_TAG}
-)
-FetchContent_MakeAvailable(argparse)
-
-# spdlog
-include(FetchContent)
-FetchContent_Declare(
-        spdlog
-        GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG ${SPDLOG_TAG}
 )
 FetchContent_MakeAvailable(argparse)
 
