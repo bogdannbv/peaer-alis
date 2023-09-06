@@ -55,18 +55,17 @@ if(NOT Gnuradio_FOUND)
 endif()
 
 # CPR
-find_package(cpr REQUIRED)
+find_package(cpr)
 if(NOT cpr_FOUND)
-    message(FATAL_ERROR "cpr is required to compile ${PROJECT_NAME}")
+    set(CPR_USE_SYSTEM_CURL ON)
+    include(FetchContent)
+    FetchContent_Declare(
+            cpr
+            GIT_REPOSITORY https://github.com/libcpr/cpr.git
+            GIT_TAG ${CPR_TAG}
+    )
+    FetchContent_MakeAvailable(cpr)
 endif()
-#set(CPR_USE_SYSTEM_CURL ON)
-#include(FetchContent)
-#FetchContent_Declare(
-#        cpr
-#        GIT_REPOSITORY https://github.com/libcpr/cpr.git
-#        GIT_TAG ${CPR_TAG}
-#)
-#FetchContent_MakeAvailable(cpr)
 
 # argparse
 include(FetchContent)
