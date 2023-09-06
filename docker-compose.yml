@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  alis:
+    image: bogdannbv/alis:latest
+    container_name: alis
+    restart: unless-stopped
+    environment:
+      API_URL: ${API_URL}
+      API_KEY: ${API_KEY}
+      DEVICE: ${DEVICE}
+      REC_DIR: ${REC_DIR}
+      REC_DURATION: ${REC_DURATION}
+      INTERVAL: ${INTERVAL}
+      SAMPLE_RATE: ${SAMPLE_RATE}
+      START_FREQ: ${START_FREQ}
+      SONGREC: ${SONGREC}
+    devices:
+      - ${DEVICE_PATH}
