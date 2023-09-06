@@ -40,4 +40,3 @@ RUN pacman -Sy --noconfirm \
 COPY docker-entrypoint.sh /usr/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
-CMD ["start"]
