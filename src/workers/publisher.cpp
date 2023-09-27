@@ -9,7 +9,8 @@ namespace workers {
 
     void publisher::start(messages::recognitions_channel &recognitions) {
         for (auto recognition: recognitions) {
-            recognition.publish_tries++;
+            // sleep for retries * 5 seconds
+            std::this_thread::sleep_for(std::chrono::seconds(recognition.publish_tries * 5));
             try {
                 client->create_playback(
                         recognition.recording.station.id,
@@ -24,11 +25,12 @@ namespace workers {
             } catch (api::exception &e) {
                 spdlog::error("Couldn't create playback: {}", e.what());
 
-                if (recognition.publish_tries >= 5) {
+                if (recognition.publish_tries >= 8) {
                     spdlog::error("Reached max publish tries, skipping");
                     continue;
                 }
                 spdlog::error("Pushing back for retry");
+                recognition.publish_tries++;
                 recognitions << recognition;
                 continue;
             }
