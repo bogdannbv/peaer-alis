@@ -15,7 +15,14 @@ namespace workers {
     ) {
         for (auto recording: rx_recordings) {
             std::string path = recording.file_path;
-            nlohmann::json response = nlohmann::json::parse(recognize(path));
+
+            std::string json = recognize(path);
+
+            if (json.empty()) {
+                continue;
+            }
+
+            nlohmann::json response = nlohmann::json::parse(json);
 
             if (!response["matches"].empty()) {
                 tx_recognitions << messages::recognition{
@@ -40,10 +47,14 @@ namespace workers {
 
         if (result.exitstatus != 0) {
             spdlog::error("SongRec failed with exit code " + std::to_string(result.exitstatus));
+
+            return "";
         }
 
         if (result.output.empty()) {
-            spdlog::warn("SongRec couldn't recognize " + path);
+            spdlog::warn("SongRec couldn't recognize: {}", path);
+
+            return "";
         }
 
         return result.output;
