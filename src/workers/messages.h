@@ -24,7 +24,7 @@ namespace workers::messages {
     struct recognition {
         messages::recording recording;
         nlohmann::json shazam_response;
-        double publish_tries = 0;
+        int publish_tries = 0;
     };
 
     typedef msd::channel<station> stations_channel;
