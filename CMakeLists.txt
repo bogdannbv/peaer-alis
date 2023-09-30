@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 project(alis)
 set(${PROJECT_NAME}_MAJOR "0")
 set(${PROJECT_NAME}_MINOR "1")
-set(${PROJECT_NAME}_PATCH "1")
+set(${PROJECT_NAME}_PATCH "2")
 
 set(CMAKE_CXX_STANDARD 23)
 

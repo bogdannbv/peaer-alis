@@ -11,7 +11,7 @@
 #include <spdlog/spdlog.h>
 
 const std::string PROGRAM_NAME = "alis";
-const std::string PROGRAM_VERSION = "0.1.1";
+const std::string PROGRAM_VERSION = "0.1.2";
 
 const double DEFAULT_SAMPLE_RATE = 1800000;
 const double DEFAULT_START_FREQ = 88000000;
