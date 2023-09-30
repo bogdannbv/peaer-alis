@@ -12,8 +12,9 @@ ENV START_FREQ=88000000
 ENV SONGREC=/usr/sbin/songrec
 
 COPY .. /alis
+COPY docker-entrypoint.sh /usr/bin/docker-entrypoint.sh
 
-RUN pacman -Sy --noconfirm \
+RUN pacman -Syu --noconfirm \
     && pacman -S --noconfirm \
       git \
       gnuradio \
@@ -36,7 +37,5 @@ RUN pacman -Sy --noconfirm \
     && mv src/alis /usr/bin/alis \
     && rm -r /alis \
     && pacman -Scc --noconfirm
-
-COPY docker-entrypoint.sh /usr/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
