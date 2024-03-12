@@ -1,5 +1,17 @@
 # Alis
-A hacked-together FM Radio listener and music recognizer
+***A lis***-tener and music recognizer for FM radio stations. \
+Based on work done by the [Gqrx](https://github.com/gqrx-sdr/gqrx) team and [GNURadio](https://github.com/gnuradio/gnuradio)
+
+# Dependencies
+- [SongRec](https://github.com/marin-m/SongRec)
+- [GNURadio](https://github.com/gnuradio/gnuradio) with the following components:
+  * gnuradio-runtime
+  * gnuradio-analog
+  * gnuradio-blocks
+  * gnuradio-digital
+  * gnuradio-filter
+  * gnuradio-fft
+- [gnuradio-osmosdr](https://gitea.osmocom.org/sdr/gr-osmosdr)
 
 ## Basic Usage
 ```
