@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# For a list of vendor and device IDs, see: https://osmocom.org/projects/rtl-sdr/wiki#Supported-Hardware
+
+vendor_ids=(
+  # Realtek Semiconductor Corp.
+  "0bda"
+)
+
+device_ids=(
+  # RTL2838U DVB-T
+  "2838"
+)
+
 for sysdevpath in $(find /sys/bus/usb/devices/usb*/ -name dev); do
     (
         syspath="${sysdevpath%/dev}"
@@ -8,13 +20,10 @@ for sysdevpath in $(find /sys/bus/usb/devices/usb*/ -name dev); do
         [[ "$devname" == "bus/"* ]] || [[ "$devname" == "input/"* ]] || [[ "$devname" == "video0"* ]] || exit
 
         eval "$(udevadm info -q property --export -p $syspath)"
-        [[ -z "$ID_SERIAL" ]] && exit
+        [[ -z "$ID_SERIAL" ]] && [[ -z "$ID_VENDOR_ID" ]] && [[ -z "$ID_MODEL_ID" ]] && exit
 
-        busnum="$(udevadm info -a -p  $(udevadm info -q path -n /dev/$devname) | awk -F "==" '/busnum/ {gsub("\"","");print $2}' | head -1)"
-        devnum="$(udevadm info -a -p  $(udevadm info -q path -n /dev/$devname) | awk -F "==" '/devnum/ {gsub("\"","");print $2}' | head -1)"
-        bus_dev=${busnum}:${devnum}
-        lsusb="$(lsusb -s $bus_dev)"
+        ! [[ ${vendor_ids[*]} =~ ${ID_VENDOR_ID} ]] && ! [[ ${device_ids[*]} =~ ${ID_MODEL_ID} ]] && exit
 
-        echo "$lsusb - /dev/$devname"
+        echo "/dev/$devname"
     )
 done
